@@ -1,0 +1,279 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+	<title>无标题</title>
+</head>
+<body>
+<p>
+	<span style="color:rgb(17,17,17); line-height:21px; white-space:pre-wrap"><span style="font-size:18px"><strong>面试题：数的整数次方</strong></span><span style="font-size:12px"><br />
+	</span></span>
+</p>
+<p>
+	<span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap"><br />
+	</span>
+</p>
+<p>
+	<span style="font-size:13px; line-height:21px; white-space:pre-wrap"><span style="color:#ff0000"><strong>温馨提示：</strong></span></span><span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap">本技术博客的相关代码将会在github(<span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap"><a target="_blank" href="https://github.com/yanglr">https://github.com/yanglr</a></span>)中同步更新，敬请star和fork...</span>
+</p>
+<p>
+	<span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap"><br />
+	</span>
+</p>
+<p>
+	<span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap"><strong>题目：</strong>实现函数double Power(double base, int exponent), 求base的exponent次方。不得使用库函数，同时<strong>不需要考虑大数问题</strong>。</span><br />
+	
+</p>
+<p>
+	<span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap">其中base为浮点数，而exponent为整数(可正可负，可为0).</span>
+</p>
+<p>
+	<span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap"><br />
+	</span>
+</p>
+<p>
+	提交网址：&nbsp;<a target="_blank" href="http://www.nowcoder.com/practice/1a834e5e3e1a4b7ba251417554e07c00?tpId=13&amp;tqId=11165">http://www.nowcoder.com/practice/1a834e5e3e1a4b7ba251417554e07c00?tpId=13&amp;tqId=11165</a>
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	<strong><span style="font-size:14px">分析：</span></strong>
+</p>
+<p>
+	二分求幂(时间复杂度为log n)，使用二分法则问题可转化为：<br />
+	
+</p>
+<p>
+	<img src="http://img.blog.csdn.net/20160507003255004" alt="" /><br />
+	
+</p>
+<p>
+	此公式并不能很好的反映情况，且用n=2k+1表示<strong>奇数</strong>时，<strong>(</strong><span style="font-size:18px">n</span><sub>奇</sub><strong>-1)/2=k=</strong><span style="font-size:12px"><span style="color:rgb(51,51,51); line-height:20px">⌊</span></span><span style="border:0px; margin:0px; padding:0px; font-family:inherit; vertical-align:baseline; line-height:24px"><span style="font-size:12px"><span style="font-size:18px">n</span><sub>奇</sub>/2<span style="color:rgb(51,51,51); font-size:13px; line-height:20px">⌋&nbsp;</span></span></span>(k<span style="color:rgb(51,51,51); font-size:13px; line-height:20px">∈Z</span>)，故以上公式可改进成如下公式：
+</p>
+<p>
+	<img src="http://img.blog.csdn.net/20160514130818081" alt="" /><br />
+	
+</p>
+<p>
+	<span style="font-size:12px">其中 <img src="http://img.blog.csdn.net/20160514132111631" alt="" />，不论n是奇是偶，对其折半后下取整即可得到k，而在编程语言中如果变量类型为整型，k=n/2，<span style="color:rgb(51,51,51); line-height:20px">如果用弱数据类型的语言(比如：PHP、</span><a target="_blank" href="http://lib.csdn.net/base/11" class="replace_word" title="undefined" style="text-decoration:none; line-height:20px"><span style="color:#000000">Py</span><span style="color:#333333">thon</span></a><span style="color:rgb(51,51,51); line-height:20px">、JavaScript等)实现此方法，需自行ceiling或ceil进行下取整！</span></span>
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	当选取某种强数据类型的编程语言，且上述公式中的变量n类型为整型时，可继续简化：<br />
+	<img src="http://img.blog.csdn.net/20160507074543378?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /><br />
+	
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	这样，比较容易理解，也有利于写出清晰结构的代码...
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	非递归实现 AC代码：
+</p>
+<p>
+</p>
+<pre code_snippet_id="1675646" snippet_file_name="blog_20160509_1_7836158" name="code" class="cpp">#include&lt;cstdio&gt;
+using namespace std;
+class Solution {
+public:
+    double Power(double base, int exponent) {
+        if(exponent &lt; 0)  // 将指数exponent&lt;0的情形规约为exponent&gt;0的情形
+        {
+            exponent = -exponent;
+            base = 1.0/base;
+        }
+        double res = 1.0;
+        for(; exponent &gt; 0; exponent &gt;&gt;= 1)  // 指数每次折半，进行迭代
+        {
+            if((exponent &amp; 0x1) == 1)  res *= base;  // a &amp; 0x1 等价于 a%2，用来判断a的奇偶性
+            base *= base;  // 底数base替换为base^2
+        }
+        return res;
+    }
+};
+
+// 以下为测试
+int main()
+{
+	Solution sol;
+	double num1=sol.Power(20, 2);
+	double num2=sol.Power(13, -2);
+	double num3=sol.Power(-10, 3);
+	double num4=sol.Power(0, 0);	
+	printf(&quot;%f\n&quot;,num1); 
+	printf(&quot;%f\n&quot;,num2);
+	printf(&quot;%f\n&quot;,num3);		
+	printf(&quot;%d\n&quot;,num4);		
+	return 0;
+}</pre>
+<br />
+
+<p>
+</p>
+<p>
+</p>
+<p>
+	剑指offer上不需要考虑大数问题，可是Leetcode上<span style="color:rgb(17,17,17); font-size:13px; line-height:21px; white-space:pre-wrap">需要考虑大数问题、边界值问题</span>...
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	<span style="color:rgb(51,51,51); font-size:24px; line-height:26px">50. Pow(x, n)</span>
+</p>
+<p>
+	<span style="color:rgb(51,51,51); font-size:14px; line-height:30px"><span class="total-ac text-info" style="color:rgb(49,112,143); font-size:13px; vertical-align:text-bottom">Total Accepted:&nbsp;<span style="font-weight:700">90298</span></span><span style="color:rgb(51,51,51); font-size:14px; line-height:20px">&nbsp;</span><span class="total-submit text-info" style="color:rgb(49,112,143); margin-left:15px; font-size:13px; vertical-align:text-bottom">Total Submissions:&nbsp;<span style="font-weight:700">323977</span></span><span style="color:rgb(51,51,51); font-size:14px; line-height:20px">&nbsp;</span><span class="total-submit text-info" style="color:rgb(49,112,143); margin-left:15px; font-size:13px; vertical-align:text-bottom">Difficulty:&nbsp;<span style="font-weight:700">Medium &nbsp; &nbsp;ACrate:&nbsp;<span style="color:rgb(51,51,51); font-size:14px; line-height:20px">27.9%</span></span></span><br />
+	</span>
+</p>
+<p>
+	<span style="color:rgb(51,51,51); font-size:14px; line-height:30px">Implement pow(</span><span style="color:rgb(51,51,51); font-size:14px; line-height:30px">x</span><span style="color:rgb(51,51,51); font-size:14px; line-height:30px">,&nbsp;</span><span style="color:rgb(51,51,51); font-size:14px; line-height:30px">n</span><span style="color:rgb(51,51,51); font-size:14px; line-height:30px">).</span><br />
+	
+</p>
+<p>
+	提交网址：&nbsp;<a target="_blank" href="https://leetcode.com/problems/powx-n/">https://leetcode.com/problems/powx-n/</a>
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	刚开始Leetcode上越界条件怎么都过不去，每次都是&nbsp;<span style="color:rgb(84,84,84); font-size:12px; line-height:18px"><strong>299 / 300</strong> test</span><span style="color:rgb(84,84,84); font-size:12px; line-height:18px">&nbsp;cases passed.</span>...
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	<strong>输入输出样例：</strong>
+</p>
+<p>
+	<br />
+	
+</p>
+<p>
+	Input:<br />
+	2.00000<br />
+	-2147483648<br />
+	<br />
+	Output:<br />
+	0.00000<br />
+	----------------<br />
+	Input:<br />
+	1.00000<br />
+	-2147483648<br />
+	<br />
+	Output:<br />
+	1.00000<br />
+	----------------<br />
+	Input:<br />
+	-1.00000<br />
+	2147483647<br />
+	<br />
+	Output:<br />
+	-1.00000<br />
+	----------------<br />
+	Input:<br />
+	-1.00000<br />
+	-2147483648<br />
+	<br />
+	Output:<br />
+	1.00000<br />
+	----------------<br />
+	Input:<br />
+	2.00000<br />
+	-2147483648<br />
+	<br />
+	Output:<br />
+	0.00000<br />
+	<br />
+	<br />
+	<span style="font-family:Arial,Helvetica,sans-serif">LeetCode AC代码:</span>
+</p>
+<p>
+	<span style="font-family:Arial,Helvetica,sans-serif"></span>
+</p>
+<pre code_snippet_id="1675646" snippet_file_name="blog_20160509_2_3518543" name="code" class="cpp">#include&lt;cstdio&gt;
+#include&lt;climits&gt;     // INT_MAX和INT_MAX在C语言limits.h中定义，而float.h 定义了double、float类型数的最大最小值 
+using namespace std;
+class Solution {
+public:
+    double myPow(double x, int n)
+    {
+        if(x==0 &amp;&amp; n==0) return 1;    
+        if((n&lt;=INT_MIN || n&gt;=INT_MAX) &amp;&amp; (x&gt;1 || x&lt;-1)) return 0;
+        if(x==1 &amp;&amp; n==INT_MIN) return 1;  // 加的超强补丁   
+        if(n&gt;=INT_MAX &amp;&amp; (x==1 || x==-1)) return x;
+        if(n&lt;=INT_MIN &amp;&amp; (x==1 || x==-1)) return -x;
+
+        if(n &lt; 0)
+        {
+            n = -n;
+            x = 1.0/x;
+        }
+        double res = 1.0;
+        for(; n &gt; 0; n &gt;&gt;= 1)
+        {
+            if((n &amp; 0x1) == 1)  res *= x;
+            x *= x;  // 底数x替换为x^2
+        }
+        return res;
+    }
+};
+
+// 以下为测试
+int main()
+{
+	Solution sol;
+	double res1=sol.myPow(0, 0);	
+	double res2=sol.myPow(13, -2);
+	double res3=sol.myPow(-10, 0);
+	double res4=sol.myPow(20, 2);	
+	double res5=sol.myPow(2.00000,-2147483648);
+	double res6=sol.myPow(1.00000,-2147483648);
+	double res7=sol.myPow(-1.00000,2147483647);
+	double res8=sol.myPow(-1.00000,-2147483648);
+	double res9=sol.myPow(2.00000,-2147483648);
+		
+	printf(&quot;%f\n&quot;, res1); 
+	printf(&quot;%f\n&quot;, res2);
+	printf(&quot;%f\n&quot;, res3);		
+	printf(&quot;%f\n&quot;, res4);
+	printf(&quot;%f\n&quot;, res5);
+	printf(&quot;%f\n&quot;, res6);		
+	printf(&quot;%f\n&quot;, res7);
+	printf(&quot;%f\n&quot;, res8);
+	printf(&quot;%f\n&quot;, res9);				
+	return 0;
+}</pre>
+<br />
+<br />
+
+<p>
+	相关链接：
+</p>
+<p>
+	剑指offer-面试题11：数值的整数次方 <a target="_blank" href="https://www.douban.com/note/355223813/">https://www.douban.com/note/355223813/</a><br />
+	
+</p>
+<p>
+	<span style="font-family:Arial,Helvetica,sans-serif"><br />
+	</span>
+</p>
+<p>
+	<br />
+	
+</p>
+</body>
+</html>
